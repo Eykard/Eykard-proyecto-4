@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="es" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eykard luxury cars Elite Corp. | E-Commerce & Alquiler de Alta Gama</title>
+    
+    <!-- Bootstrap 5.3.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome 6.5.1 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <!-- Custom Stylesheet -->
+    <link href="style.css" rel="stylesheet">
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- html2pdf.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+
+    <!-- Sticky Glassmorphism Navbar -->
+    <nav class="navbar navbar-expand-lg fixed-top glass-navbar px-3 px-lg-5">
+        <div class="container-fluid">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="#">
+                <img src="assets/logo_pagina.png" alt="Luxury Motors" width="42" height="42" class="rounded-circle border border-info object-fit-cover" onerror="this.src='https://placehold.co/100x100/111/00d2ff?text=DLS'">
+                <div class="d-flex flex-column">
+                    <span class="fw-extrabold text-white tracking-wider fs-6" style="letter-spacing: 1px;">Eykard Luxury cars</span>
+                    <span class="text-info fs-xs" style="font-size: 0.7rem; font-weight: 700;">ELITE CORP.</span>
+                </div>
+            </a>
+            
+            <button class="navbar-toggler border-0 text-white" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                <i class="fas fa-bars-staggered fs-4"></i>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <div class="mx-lg-auto my-2 my-lg-0 w-100" style="max-width: 420px;">
+                    <div class="input-group">
+                        <span class="input-group-text bg-dark border-secondary text-info"><i class="fas fa-magnifying-glass"></i></span>
+                        <input type="text" id="searchInput" class="form-control border-secondary shadow-none" placeholder="Buscar por marca, modelo o motor...">
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center gap-3 ms-lg-3">
+                    <button class="btn btn-outline-info btn-sm rounded-pill px-3 fw-bold d-flex align-items-center gap-2" onclick="openCartModal()">
+                        <i class="fas fa-shopping-bag"></i> Carrito <span id="navCartBadge" class="badge bg-info text-dark rounded-pill">0</span>
+                    </button>
+                    <button class="btn btn-warning btn-sm rounded-pill px-3 fw-bold text-dark" onclick="openCheckoutModal()">
+                        <i class="fas fa-credit-card me-1"></i> Checkout VIP
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Banner -->
+    <header class="hero-banner text-center position-relative">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="mb-3">
+                        <img src="assets/logo_pagina.png" alt="Logo Principal" width="90" height="90" class="rounded-circle border border-2 border-info shadow-lg p-1 bg-dark object-fit-cover" onerror="this.src='https://i.postimg.cc/8P8w8BCR/Gemini-Generated-Image-fzgja0fzgja0fzgj.jpg'">
+                    </div>
+                    <h1 class="display-5 fw-extrabold text-white mb-2" style="letter-spacing: -0.5px;">Eykard luxury car catalog</h1>
+                    <p class="lead text-light mb-4" style="max-width: 700px; margin: 0 auto; color: #94a3b8 !important;">
+                        Adquisición inmediata y alquiler ejecutivo de flotas de alta gama con contratos blindados, fianza reembolsable y emisión instantánea de documentos oficiales.
+                    </p>
+                    
+                    <!-- Filter Tabs -->
+                    <div class="d-flex justify-content-center flex-wrap gap-2 mt-4">
+                        <button class="filter-btn active" onclick="filterCatalog('todos', this)"><i class="fas fa-border-all me-1"></i> Todos</button>
+                        <button class="filter-btn" onclick="filterCatalog('vehiculos', this)"><i class="fas fa-car-side me-1"></i> Vehículos de Lujo</button>
+                        <button class="filter-btn" onclick="filterCatalog('motos', this)"><i class="fas fa-motorcycle me-1"></i> Motos Superbike</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Catalog -->
+    <main class="container my-5 py-2">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="fw-bold text-white mb-0"><span class="text-info">Flota</span> Disponible</h3>
+            <span id="catalogCount" class="text-muted small">Cargando unidades...</span>
+        </div>
+
+        <div id="catalogGrid" class="row g-4">
+            <!-- Dynamic Cards Loaded Here -->
+        </div>
+    </main>
+
+    <!-- Floating Cart Button -->
+    <button class="floating-cart-btn" onclick="openCartModal()" title="Ver Carrito de Compras">
+        <i class="fas fa-cart-shopping"></i>
+        <span id="floatCartBadge" class="cart-badge-count">0</span>
+    </button>
+
+    <!-- Modal Interactivo de Alquiler -->
+    <div class="modal fade" id="rentalModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content shadow-lg">
+                <div class="modal-header border-bottom border-secondary">
+                    <h5 class="modal-title fw-bold text-info"><i class="fas fa-key me-2"></i> Configuración de Alquiler Ejecutivo</h5>
+                    <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4" id="rentalModalBody"></div>
+                <div class="modal-footer border-top border-secondary">
+                    <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-info rounded-pill px-4 fw-bold text-dark" id="confirmRentalBtn"><i class="fas fa-cart-plus me-1"></i> Agregar Alquiler al Carrito</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal del Carrito de Compras -->
+    <div class="modal fade" id="cartModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content shadow-lg">
+                <div class="modal-header border-bottom border-secondary">
+                    <h5 class="modal-title fw-bold text-info"><i class="fas fa-shopping-bag me-2"></i> Carrito de Compras y Alquileres</h5>
+                    <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4" id="cartModalBody"></div>
+                <div class="modal-footer border-top border-secondary d-flex justify-content-between">
+                    <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-3" onclick="clearCart()"><i class="fas fa-trash-can me-1"></i> Vaciar Carrito</button>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Seguir Explorando</button>
+                        <button type="button" class="btn btn-warning rounded-pill px-4 fw-bold text-dark" onclick="proceedToCheckout()"><i class="fas fa-arrow-right me-1"></i> Proceder al Pago & Factura</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Checkout & Pasarela de Pago -->
+    <div class="modal fade" id="checkoutModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content shadow-lg">
+                <div class="modal-header border-bottom border-secondary">
+                    <h5 class="modal-title fw-bold text-warning"><i class="fas fa-shield-halved me-2"></i> Pasarela de Pago & Datos de Facturación VIP</h5>
+                    <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="alert alert-dark border border-info mb-4 d-flex justify-content-between align-items-center flex-wrap gap-2" style="background: rgba(0, 210, 255, 0.05);">
+                        <div>
+                            <i class="fas fa-circle-info text-info me-1"></i> 
+                            <span class="text-white fw-bold">Campos pre-rellenados por defecto</span> con credenciales corporativas del <span class="text-info fw-bold">Ing. Eykard Onassis De Los Santos</span>.
+                        </div>
+                        <button type="button" class="btn btn-sm btn-info rounded-pill fw-bold text-dark px-3" onclick="loadDefaultDemoData()">
+                            ⚡ Rellenar Datos Ficticios de Prueba (Demo VIP)
+                        </button>
+                    </div>
+
+                    <form id="checkoutForm">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Nombre y Apellidos</label>
+                                <input type="text" id="clientName" class="form-control" value="Ing. Eykard Onassis De Los Santos" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Documento / Cédula</label>
+                                <input type="text" id="clientId" class="form-control" value="402-1234567-8" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Licencia de Conducir (Requerida para Alquileres)</label>
+                                <input type="text" id="clientLicense" class="form-control" value="DO-8874125-VIP (Vigente)" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Teléfono de Contacto</label>
+                                <input type="text" id="clientPhone" class="form-control" value="+1 (809) 555-0199" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Correo Electrónico Corporativo</label>
+                                <input type="email" id="clientEmail" class="form-control" value="EykardDLS@luxurycars.com" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Dirección de Entrega / Residencia</label>
+                                <input type="text" id="clientAddress" class="form-control" value="Av. Anacaona #105, Torre Bella Vista, Santo Domingo, D.N." required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Número de Tarjeta Simulada</label>
+                                <input type="text" id="clientCard" class="form-control" value="4532 8901 2345 8899" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Fecha de Vencimiento</label>
+                                <input type="text" id="clientCardExp" class="form-control" value="12/28" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">CVV de Seguridad</label>
+                                <input type="password" id="clientCardCvv" class="form-control" value="789" required>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-top border-secondary d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="text-muted small">Transacción Cifrada y Blindada / Monto Final:</span>
+                        <span id="checkoutTotalModalDisplay" class="text-warning fw-bold fs-5 ms-2">$0.00 USD</span>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-success rounded-pill px-4 fw-bold shadow" onclick="processPaymentAndGeneratePDF()">
+                            <i class="fas fa-file-pdf me-1"></i> Pagar & Generar PDF Oficial
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Maestro Corporativo -->
+    <footer>
+        <div class="container">
+            <img src="assets/FOTO_PORTADA_EYKARD.png" class="footer-avatar" alt="Ing. Eykard Onassis" onerror="this.src='https://lms2.oymas.edu.do/assets/avatar/assets/files/q8GRvJSECPFCZtT24-SISN-8-035-avatar.jpg'">
+            <h4>Ing. Eykard Onassis De Los Santos Bautista</h4>
+            <p class="bio">
+                <span class="keyword">Desarrollador Full Stack</span>, 
+                <span style="color: #00ff88; font-weight: bold;">Analista de Datos</span> y 
+                <span style="color: #ff8800; font-weight: bold;">Científico de Datos</span>, 
+                además de <span class="keyword-ai"> universitario en tecnologías</span>. 
+                Apasionado por la innovación, la <span class="keyword-ai">Inteligencia Artificial</span> y la educación digital.<br>
+                💡 Creador de contenido especializado en arquitectura de software, bases de datos avanzadas, análisis de datos y soluciones tecnológicas modernas.
+            </p>
+
+            <div class="mb-4">
+                <span class="tech-stack"><i class="fab fa-html5" style="color: #e34f26;"></i> HTML</span>
+                <span class="tech-stack"><i class="fab fa-css3-alt" style="color: #1572b6;"></i> CSS</span>
+                <span class="tech-stack"><i class="fab fa-js" style="color: #f7df1e;"></i> JS</span>
+                <span class="tech-stack"><i class="fab fa-bootstrap" style="color: #7952b3;"></i> Bootstrap</span>
+                <span class="tech-stack"><i class="fab fa-php" style="color: #777bb4;"></i> PHP</span>
+                <span class="tech-stack"><i class="fab fa-laravel" style="color: #ff2d20;"></i> Laravel</span>
+                <span class="tech-stack"><i class="fas fa-code"></i> C#</span>
+                <span class="tech-stack"><i class="fab fa-microsoft"></i> .NET MAUI</span>
+                <span class="tech-stack"><i class="fab fa-python" style="color: #3776ab;"></i> Python</span>
+                <span class="tech-stack"><i class="fas fa-database" style="color: #cc292b;"></i> SQL Server</span>
+                <span class="tech-stack"><i class="fas fa-file-excel" style="color: #1D6F42;"></i> Excel</span>
+                <span class="tech-stack"><i class="fas fa-chart-bar" style="color: #f2c811;"></i> Power BI</span>
+            </div>
+
+            <div class="social-icons-footer">
+                <a href="https://www.youtube.com/@EykardDLS" target="_blank" title="YouTube"><i class="fab fa-youtube"></i></a>
+                <a href="https://github.com/" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
+                <a href="https://www.linkedin.com//" target="_blank" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                <a href="https://www.instagram.com" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="https://www.facebook.com/" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://twitter.com/" target="_blank" title="X (Twitter)"><i class="fa-brands fa-x-twitter"></i></a>
+            </div>
+
+            <button class="btn-youtube" onclick="window.open('https://www.youtube.com/@EykardDLS','_blank')">
+                🎥 Suscríbete a mi canal
+            </button>
+
+            <hr class="my-4" style="border-color:#333;">
+            <p class="mb-0" style="color: #888; font-size: 14px;">© 2026 Catálogo de Vehículos Premium | Arquitectura por <span style="color: #ccc; font-weight: bold;">Ing. Eykard De Los Santos</span></p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5.3.3 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom Script File -->
+    <script src="script.js"></script>
+</body>
+</html>
